@@ -1,0 +1,20 @@
+dataname: None
+datasetname: boxing
+skeleton: motive
+skeleton_process: reactive
+dataloader_cfg: # we see the term "dataloader" as one word?
+    type: DefaultDataloader
+    dataset_cfg: &dataset_cfg
+        # motion split
+        gen_motion_split: False
+        # preprocess
+        gen_preprocess: False
+        # dirs
+        root_dirs: # root_dirs is a list of directories
+            - data/DuoBox
+        motion_dir_names:
+            - fbx_export_joints
+
+val_dataloader_cfg:
+    dataset_cfg:
+        <<: *dataset_cfg

@@ -1,0 +1,25 @@
+runner_cfg:
+    clip_grad_norm: 0.5
+    type: MoConRunner
+    epochs: 40
+    ep_iter: 1000
+    optimizer_cfg:
+        type: AdamW
+        lr: 1.0e-4
+    evaluator_cfg:
+        type: ReactiveMoConEvaluator
+        apd_compute: False
+        metric_names:
+            - twoagent_rootrot
+            - foot_slide
+            - jitter
+        vis_types:
+            - pose_pos
+        vis_stats_keys:
+            - agent1
+            - agent2
+
+dataloader_cfg: # we see the term "dataloader" as one word?
+    type: DefaultDataloader
+    batch_sampler_cfg:
+      batch_size: &batch_size 32

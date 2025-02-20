@@ -1,0 +1,17 @@
+tqdm
+numpy==1.26.4
+pdbr
+yapf
+h5py
+ujson
+addict
+tensorboard
+wandb
+ruamel.yaml
+scikit-image
+scikit-learn
+opencv-python
+wis3d
+einops==0.6.1
+smplx
+# pytorch3d: pip install pytorch3d-0.7.2-cp39-cp39-linux_x86_64.whl

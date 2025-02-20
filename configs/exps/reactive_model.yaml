@@ -1,0 +1,41 @@
+exp_name: reactive_model
+dataname: react_motoken
+configs:
+  - configs/base.yaml
+  - configs/specs/dataset/boxing_react.yaml
+  - configs/specs/windows/window_react.yaml
+  - configs/specs/runner/mocon_runner_react.yaml
+  - configs/specs/metrics/feature_types.yaml
+
+# spec
+motoken_cfg_file: configs/exps/vqvae_tokenizer.yaml
+
+norm_cfg:
+    motoken_input_norm_file: auto
+
+dataloader_cfg: # we see the term "dataloader" as one word?
+    dataset_cfg: &dataset_cfg
+        type: BoxingReactDataset
+
+val_dataloader_cfg:
+    dataset_cfg:
+        <<: *dataset_cfg
+
+model_cfg:
+    type: ReactiveARDiffDecModel
+    inference_func: reactive
+    diffusion_steps: 1000
+    network_cfg:
+        type: ReactiveARDiffDecNetwork
+        input_feats: &input_feats 512 # latent nfeats
+        oppo_feats: 252 # oppo nfeats
+        latent_dim: &latent_dim 512 # latent dim
+    decoder_cfg:
+        type: ReactiveARDecoder
+        pose_feats: 256
+        root_feats: 5
+        latents_feats: *input_feats
+    agent_cfg:
+        type: Agent
+        interpolate: True
+        align: True

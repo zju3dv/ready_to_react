@@ -1,0 +1,6 @@
+window_cfg:
+  vocab_size: 512
+  vqmotion_window_size: 64 # num motions of vqvae
+  unit_length: 4
+  block_size: &block_size 15
+  infer_gpttoken_window_size: 1 # num tokens of gpt in testing

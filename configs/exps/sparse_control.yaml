@@ -1,0 +1,44 @@
+exp_name: sparse_control
+dataname: react_motoken
+configs:
+  - configs/base.yaml
+  - configs/specs/dataset/boxing_sparse.yaml
+  - configs/specs/windows/window_react.yaml
+  - configs/specs/runner/mocon_runner_sparse.yaml
+  - configs/specs/metrics/feature_types.yaml
+
+# spec
+motoken_cfg_file: configs/exps/vqvae_tokenizer.yaml
+reactive_cfg_file: configs/exps/reactive_model.yaml
+
+norm_cfg:
+    motoken_input_norm_file: auto
+
+model_cfg:
+    type: SparseControlARDiffDecModel
+    inference_func: reactive
+    diffusion_steps: 1000
+    agent_cfg:
+        type: Agent
+        interpolate: True
+        align: True
+    network_cfg:
+        type: SparseControlARDiffDecNetwork
+        input_feats: &input_feats 512 # latent nfeats
+        oppo_feats: 252 # oppo nfeats
+        ctrl_feats: 27
+        latent_dim: &latent_dim 512 # latent dim
+    decoder_cfg:
+        type: SparseControlARDecoder
+        pose_feats: 256
+        root_feats: 5
+        ctrl_feats: 27
+        latents_feats: *input_feats
+        
+dataloader_cfg: # we see the term "dataloader" as one word?
+    dataset_cfg: &dataset_cfg
+        type: SparseControlDataset
+
+val_dataloader_cfg:
+    dataset_cfg:
+        <<: *dataset_cfg

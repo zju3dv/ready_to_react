@@ -1,0 +1,16 @@
+runner_cfg:
+    type: MotionBaseRunner
+    epochs: 40
+    ep_iter: 1000
+    optimizer_cfg:
+        type: AdamW
+        lr: 1.0e-4
+    evaluator_cfg:
+        type: MoTokenEvaluator
+        metric_names:
+            - pose_error
+            - root_error
+        vis_types:
+            - pose_pos
+        vis_stats_keys:
+            - glb_pose_pos

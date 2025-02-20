@@ -1,0 +1,9 @@
+runner_cfg:
+  evaluator_cfg:
+    feature_compute: True
+    feature_types: 
+      - perframe
+      - pertrans
+      - perclip
+    feature_metric_names:
+      - fid

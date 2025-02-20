@@ -1,0 +1,45 @@
+exp_name: vqvae_tokenizer
+dataname: motoken
+
+norm_cfg:
+    motoken_input_norm_file: 'data/boxing/reactive/motoken/pose_series.npy'
+
+configs:
+  - configs/base.yaml
+  - configs/specs/dataset/boxing_react.yaml
+  - configs/specs/windows/window_tokenizer.yaml
+  - configs/specs/runner/motoken_runner.yaml
+
+dataloader_cfg: # we see the term "dataloader" as one word?
+    batch_sampler_cfg:
+        batch_size: &batch_size 128
+    dataset_cfg: &dataset_cfg
+        type: BoxingMoTokenDataset
+
+val_dataloader_cfg:
+    dataset_cfg:
+        <<: *dataset_cfg
+
+model_cfg:
+    type: MoTokenModel
+    network_cfg:
+        type: VQVAEEMAResetT2MGPTMoTokenNetwork
+        input_dim: &input_dim 256
+        dim: 512
+        K: 512
+        encoder_cfg:
+          type: T2MGPTEncoder
+          down_t: &down_t 2
+          width: &width 512
+          dilation_growth_rate: 3
+        decoder_cfg:
+          type: T2MGPTDecoder
+          down_t: *down_t
+          width: *width
+          dilation_growth_rate: 3
+    supervisor_cfg:
+        type: VQVAEMoTokenSupervisor
+        x_recon_l2_weight: 0.0
+        x_recon_l1smooth_weight: 1.0
+        q_latent_weight: 0.0
+        e_latent_weight: 0.1

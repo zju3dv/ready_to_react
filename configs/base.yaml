@@ -1,0 +1,48 @@
+# Default config for the whole project
+
+# Outermost level configuration switches
+exp_name: debug
+tag_name: ''
+mocking: False
+detect_anomaly: False
+fix_random: False
+allow_tf32: False
+deterministic: False # deterministic training (debug only)
+benchmark: False # when benchmarking, slow, after, fast
+profiler_cfg:
+    enabled: False # no profiling by default
+print_model: False # defaults to a compact interface
+preparing_parser: False
+
+dataloader_cfg: &dataloader_cfg # we see the term "dataloader" a one word?
+    type: DefaultDataloader
+    dataset_cfg:
+        split: TRAIN
+    batch_sampler_cfg:
+        batch_size: 8
+        drop_last: True
+
+val_dataloader_cfg: # we see the term "dataloader" a one word?
+    <<: *dataloader_cfg
+    num_workers: 1
+    max_iter: -1
+    dataset_cfg:
+        split: VAL
+    batch_sampler_cfg:
+        batch_size: 1
+        drop_last: False
+
+runner_cfg: &runner_cfg
+    type: MotionBaseRunner
+    epochs: 200
+    ep_iter: 1000
+    eval_ep: 40
+    scheduler_cfg:
+        type: NoopLR
+    moderator_cfg:
+        type: DatasetRatioModerator
+    recorder_cfg:
+        type: MotionWandBRecoder
+    visualizer_cfg:
+        result_dir: "" # avoid import error
+        save_tag: "" # avoid import error
