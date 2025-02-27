@@ -3,10 +3,13 @@ This repo is the official implementation of "Ready-to-React: Online Reaction Pol
 <!-- [arxiv]() | [project page](https://zju3dv.github.io/ready_to_react/) -->
 
 
-## News
+## 📰 News
 [2025/02/20] We release the DuoBox dataset, training and evaluation code.
 
-## Installation
+## 🛠️ Installation
+
+<details>
+<summary> Conda environment </summary>
 ```bash
 conda create -n react python=3.9
 conda activate react
@@ -23,11 +26,19 @@ pip install -e . --no-build-isolation --no-deps
 NOTE:
 `pytorch3d` [download link](https://dl.fbaipublicfiles.com/pytorch3d/packaging/wheels/py39_cu116_pyt1130/download.html).
 
+</details>
 
-## Data preparation
-### DuoBox dataset
-1. To download DuoBox, please fill in this [form](https://docs.google.com/forms/d/e/1FAIpQLSe8-G1PxykPoCR0wjH4HZKXkWz3_5UTa9x1if3L7bGPUXhmNA/viewform?usp=sharing). We provide skeleton extracted from OptiTrack and SMPL-X fitting results. In this project, we use the skeleton extracted from OptiTrack. The skeleton definition can be found in [link](https://docs.optitrack.com/motive/data-export/data-export-bvh). 
+## 💾 The DuoBox dataset
 
+<details>
+<summary>Download the DuoBox dataset</summary>
+
+To download DuoBox, please fill in this [form](https://docs.google.com/forms/d/e/1FAIpQLSe8-G1PxykPoCR0wjH4HZKXkWz3_5UTa9x1if3L7bGPUXhmNA/viewform?usp=sharing). We provide skeleton extracted from OptiTrack and SMPL-X fitting results. In this project, we use the skeleton extracted from OptiTrack. The skeleton definition can be found in [link](https://docs.optitrack.com/motive/data-export/data-export-bvh). 
+
+</details>
+
+<details>
+<summary>Dataset format</summary>
 The data format of files under fbx_export_joints is:
 ```python
 {
@@ -48,16 +59,19 @@ The data format of files under fbx_fit_smpl is:
     }
 }
 ```
+</details>
 
-2. Link to data/:
+
+## 🔧 Preparation
+<details>
+<summary>Preprocess data</summary>
+
+1. Link DuoBox to data/:
 ```bash
 mkdir data
 ln -s /path/to/DuoBox data/DuoBox
 ```
-
-### Preprocess data
-
-1. Dataset spliting and prepare for reactive motion model:
+2. Dataset spliting and preparing for reactive motion model:
 ```bash
 python reactmotion/scripts/main.py -t data_test -c configs/exps/vqvae_tokenizer.yaml dataloader_cfg.dataset_cfg.gen_motion_split=True
 python reactmotion/scripts/main.py -t data_test -c configs/exps/vqvae_tokenizer.yaml dataloader_cfg.dataset_cfg.gen_preprocess=True
@@ -65,13 +79,16 @@ python reactmotion/scripts/main.py -t data_test -c configs/exps/reactive_model.y
 ```
 Files will be saved in data/boxing/reactive.
 
-2. Prepare for sparse control model:
+3. Dataset spliting and preparing for sparse control model:
 ```bash
 python reactmotion/scripts/main.py -t data_test -c configs/exps/sparse_control.yaml dataloader_cfg.dataset_cfg.gen_motion_split=True
 python reactmotion/scripts/main.py -t data_test -c configs/exps/sparse_control.yaml dataloader_cfg.dataset_cfg.gen_preprocess=True
 ```
+</details>
 
-### Pretrained models
+<details>
+<summary>Download pretrained models</summary>
+
 Weights are shared in [link](https://drive.google.com/file/d/11H7-JoMobmnWFfx2TkF1TOKOBrxC4PQl/view?usp=sharing). Download and unzip under `data/`.
 
 ```bash
@@ -79,58 +96,80 @@ Weights are shared in [link](https://drive.google.com/file/d/11H7-JoMobmnWFfx2Tk
 |__ DuoBox
 |__ trained_model
 ```
+</details>
 
-## Evaluation
-Useful flags:
+## 🚀 Usage
+
+<details>
+<summary>1️⃣ Reactive motion generation</summary>
+
+```bash
+python reactmotion/scripts/main.py -t test -c configs/exps/reactive_model.yaml model_cfg.inference_func=reactive
+```
+</details>
+
+<details>
+<summary>2️⃣ Two-character motion generation</summary>
+
+```bash
+python reactmotion/scripts/main.py -t test -c configs/exps/reactive_model.yaml model_cfg.inference_func=twoagent
+```
+</details>
+
+<details>
+<summary>3️⃣ Long-term two-character motion generation</summary>
+
+```bash
+python reactmotion/scripts/main.py -t test -c configs/exps/reactive_model.yaml model_cfg.inference_func=twoagent model_cfg.use_gt_length=False model_cfg.num_new_frames=1800
+```
+</details>
+
+<details>
+<summary>4️⃣ Sparse control</summary>
+
+```bash
+python reactmotion/scripts/main.py -t test -c configs/exps/sparse_control.yaml model_cfg.inference_func=reactive
+```
+</details>
+
+<details>
+<summary>Useful flags</summary>
+
 ```bash
 model_cfg.inference_func=reactive or twoagent # inference type
 runner_cfg.evaluator_cfg.feature_compute=False # skip eval FID
 runner_cfg.evaluator_cfg.apd_compute=True # eval APD
 ```
+</details>
 
-### Inference setting # 1: reactive motion generation
-```bash
-python reactmotion/scripts/main.py -t test -c configs/exps/reactive_model.yaml model_cfg.inference_func=reactive
-```
-
-### Inference setting # 2: two-character motion generation
-```bash
-python reactmotion/scripts/main.py -t test -c configs/exps/reactive_model.yaml model_cfg.inference_func=twoagent
-```
-
-
-### Inference setting # 3: long-term two-character motion generation
-```bash
-python reactmotion/scripts/main.py -t test -c configs/exps/reactive_model.yaml model_cfg.inference_func=twoagent model_cfg.use_gt_length=False model_cfg.num_new_frames=1800
-```
-
-### Inference setting # 4: sparse control
-```bash
-python reactmotion/scripts/main.py -t test -c configs/exps/sparse_control.yaml model_cfg.inference_func=reactive
-```
-
-## Training the model by yourself
+## 🧠 Training the model by yourself
 
 To train the models, simply set `-t train` istead of `-t test`. Don't forget to change the `exp_name=yourexpname`.
 
-### Step # 1: train the VQ-VAE motion tokenizer
+<details>
+<summary>1️⃣ Train the VQ-VAE motion tokenizer</summary>
+
 ```bash
 python reactmotion/scripts/main.py -t train -c configs/exps/vqvae_tokenizer.yaml exp_name=yourexpname1
 ```
+</details>
 
-### Step # 2: train the reactive motion model
+<details>
+<summary>2️⃣ Train the reactive motion model</summary>
+
 Set the config `motoken_cfg_file` to the config file generated in step # 1. It should be saved in `data/record/yourexpname1`.
 ```bash
 python reactmotion/scripts/main.py -t train -c configs/exps/reactive_model.yaml exp_name=yourexpname2
 ```
+</details>
 
 
-## Acknowledgements
+## 🙏 Acknowledgements
 - [EasyVolCap](https://github.com/zju3dv/EasyVolcap) for their nice code base.
 - [T2M-GPT](https://github.com/Mael-zys/T2M-GPT) for the VQ-VAE architecture.
 
 
-## Citation
+## 📚 Citation
 If you use our model or dataset, please cite our Ready-to-React paper. If you use easyvolcap codebase, please cite EasyVolcap as follows.
 ```
 @inproceedings{cen2025_ready_to_react,
