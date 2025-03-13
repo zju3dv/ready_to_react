@@ -142,6 +142,26 @@ runner_cfg.evaluator_cfg.apd_compute=True # eval APD
 ```
 </details>
 
+<details>
+<summary>Visualize results</summary>
+
+Set the vis_output flag: 
+```bash
+runner_cfg.evaluator_cfg.vis_output=N # visualize number of N sequences
+```
+
+We use wis3d lib to visualize the results.
+The visual results will be saved in `data/wis3d`.
+In termial, run:
+```bash
+wis3d --vis_dir out/wis3d --host ${HOST} --port ${PORT}
+```
+You can then visualize the results in `${HOST}:${PORT}`.
+
+</details>
+
+
+
 ## 🧠 Training the model by yourself
 
 To train the models, simply set `-t train` istead of `-t test`. Don't forget to change the `exp_name=yourexpname`.
